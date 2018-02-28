@@ -1,0 +1,24 @@
+{
+  "name": "hotpack-babel",
+  "version": "0.1.0",
+  "description": "hotpack babel plugin",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "hotpack",
+    "babel"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/duhongwei/hotpack-babel.git"
+  },
+  "author": "duhongwei",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.0.0-beta.40",
+    "@babel/preset-es2015": "^7.0.0-beta.40",
+    "@babel/preset-react": "^7.0.0-beta.40"
+  }
+}
