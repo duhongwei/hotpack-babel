@@ -26,10 +26,7 @@ export default async function ({ debug, opt: { transforms = {} } }) {
             [
               "@babel/env",
               {
-                "targets": {
-                  "chrome": "32",
-                },
-                "useBuiltIns":false
+                "useBuiltIns": false
                 //"useBuiltIns": 'usage',
                 //'corejs':'3.6.5'
               }
@@ -44,6 +41,7 @@ export default async function ({ debug, opt: { transforms = {} } }) {
         code = code.replace(/function _createForOfIteratorHelper.+/, '')
         code = code.replace(/function _unsupportedIterableToArray.+/, '')
         code = code.replace(/function _arrayLikeToArray.+/, '')
+
         file.content = code
 
       }

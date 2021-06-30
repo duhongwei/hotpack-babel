@@ -1,7 +1,7 @@
 {
   "name": "@q/hotpack-babel",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "hotpack babel plugin",
   "main": "index.js",
   "scripts": {
@@ -10,6 +10,12 @@
   "keywords": [
     "hotpack",
     "babel"
+  ],
+  "maintainers": [
+    {
+      "name": "duhongwei",
+      "email": "duhongwei@360.cn"
+    }
   ],
   "repository": {
     "type": "git",
