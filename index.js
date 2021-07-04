@@ -6,32 +6,34 @@ const require = createRequire(import.meta.url);
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
-
-export default async function ({ debug, opt: { transforms = {} } }) {
+const key1 = 'node/corejs.min.js'
+const key2 = 'node/regenerator-runtime.js'
+export default async function ({ debug, opts = {} }) {
   let { util: { isHtml, isJs }, config: { logger } } = this
+
   this.on('afterParse', (files) => {
-    const opts = {
-      transforms: Object.assign({ modules: false }, transforms)
-    }
     for (let file of files) {
       if (!isJs(file.key)) continue
       if (/\.min\.js$/.test(file.key)) continue
-      if (/^(other|node)\/$/.test(file.key)) continue
+      if (/^node\/$/.test(file.key)) continue
       if (file.meta && file.meta.isMin) continue
 
       debug(`buble ${file.key}`)
       try {
-        let code = babel.transformSync(file.content, {
-          "presets": [
-            [
-              "@babel/env",
-              {
-                "useBuiltIns": false
-                //"useBuiltIns": 'usage',
-                //'corejs':'3.6.5'
-              }
-            ]
+        let presetsOpt = {
+          "useBuiltIns": false
+        }
+        if (opts.targets) {
+          presetsOpt.targets = opts.targets(file, this)
+        }
+        let presets = [
+          [
+            "@babel/env",
+            presetsOpt
           ]
+        ]
+        let code = babel.transformSync(file.content, {
+          presets
         }).code;
 
         code = code.replace(/function _classCallCheck.+/, '')
@@ -53,13 +55,14 @@ export default async function ({ debug, opt: { transforms = {} } }) {
   })
 
   this.on('afterKey', async function () {
+
     let path = join(__filename, '../corejs.min.js')
 
     let content = await this.fs.readFile(path)
-
+    content.replace('sourceMappingURL','')
     this.files.push({
       meta: { isMin: true },
-      key: 'node/corejs.min.js',
+      key: key1,
       path,
       content
     })
@@ -67,17 +70,16 @@ export default async function ({ debug, opt: { transforms = {} } }) {
   this.on('afterGroup', function (files) {
 
     debug('babel on event beforeDep')
-    let key1 = 'node/corejs.min.js'
-    let key2 = 'node/regenerator-runtime.js'
 
     for (let file of files) {
       if (!isHtml(file.key)) continue;
-
-      file.dep.jsList[0].unshift(key1)
+      if (opts.usePolyfill && opts.usePolyfill(file, this)) {
+        file.dep.jsList[0].unshift(key1)
+      }
       file.dep.jsList[0].unshift(key2)
     }
   })
-  this.on('afterRead', async function () {
+  this.on('afterKey', async function () {
     let prePath = dirname(require.resolve('regenerator-runtime'))
     let path = ''
 
@@ -107,12 +109,12 @@ export default async function ({ debug, opt: { transforms = {} } }) {
     window._unsupportedIterableToArray=_unsupportedIterableToArray
     window._arrayLikeToArray=_arrayLikeToArray
     `
-    this.files.push({
+    this.addFile({
       //无论是dev,还是pro都标识为 min，就是不压缩,不转换
       meta: { isMin: true },
+      key: key2,
       path,
       content
     })
   })
 }
-
