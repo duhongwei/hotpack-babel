@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const key1 = 'node/corejs.min.js'
 const key2 = 'node/regenerator-runtime.js'
-export default async function ({ debug, opts = {} }) {
+export default async function ({ debug, opt = {} }) {
   let { util: { isHtml, isJs }, config: { logger } } = this
 
   this.on('afterParse', (files) => {
@@ -23,8 +23,8 @@ export default async function ({ debug, opts = {} }) {
         let presetsOpt = {
           "useBuiltIns": false
         }
-        if (opts.targets) {
-          presetsOpt.targets = opts.targets(file, this)
+        if (opt.targets) {
+          presetsOpt.targets = opt.targets(file, this)
         }
         let presets = [
           [
@@ -74,8 +74,9 @@ export default async function ({ debug, opts = {} }) {
     for (let file of files) {
       if (!isHtml(file.key)) continue;
        //Pollyfill单独一组
-      let babelGroup=[]
-      if (opts.usePolyfill && opts.usePolyfill(file, this)) {
+      let babelGroup = []
+     
+      if (opt.usePolyfill && opt.usePolyfill(file, this)) {
         babelGroup.push(key1)
       }
       babelGroup.push(key2)
