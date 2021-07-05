@@ -73,10 +73,13 @@ export default async function ({ debug, opts = {} }) {
 
     for (let file of files) {
       if (!isHtml(file.key)) continue;
+       //Pollyfill单独一组
+      let babelGroup=[]
       if (opts.usePolyfill && opts.usePolyfill(file, this)) {
-        file.dep.jsList[0].unshift(key1)
+        babelGroup.push(key1)
       }
-      file.dep.jsList[0].unshift(key2)
+      babelGroup.push(key2)
+      file.dep.jsList.unshift(babelGroup)
     }
   })
   this.on('afterKey', async function () {
