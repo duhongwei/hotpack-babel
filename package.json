@@ -1,7 +1,7 @@
 {
   "name": "@q/hotpack-babel",
   "type": "module",
-  "version": "0.5.0",
+  "version": "0.7.0",
   "description": "hotpack babel plugin",
   "main": "index.js",
   "scripts": {

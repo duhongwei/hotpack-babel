@@ -15,8 +15,7 @@ export default async function ({ debug, opt = {} }) {
     for (let file of files) {
       if (!isJs(file.key)) continue
       if (/\.min\.js$/.test(file.key)) continue
-      if (/^node\/$/.test(file.key)) continue
-      if (file.meta && file.meta.isMin) continue
+      if (file.meta.transformed) continue
 
       debug(`buble ${file.key}`)
       try {
@@ -43,7 +42,8 @@ export default async function ({ debug, opt = {} }) {
         code = code.replace(/function _createForOfIteratorHelper.+/, '')
         code = code.replace(/function _unsupportedIterableToArray.+/, '')
         code = code.replace(/function _arrayLikeToArray.+/, '')
-
+        code = code.replace(/function _typeof.+/, '')
+        code=code.replace(`"use strict";`,'')
         file.content = code
 
       }
@@ -59,9 +59,9 @@ export default async function ({ debug, opt = {} }) {
     let path = join(__filename, '../corejs.min.js')
 
     let content = await this.fs.readFile(path)
-    content.replace('sourceMappingURL','')
+    content.replace('sourceMappingURL', '')
     this.files.push({
-      meta: { isMin: true },
+      meta: { transformed: true, minified: true, parsed: true },
       key: key1,
       path,
       content
@@ -73,9 +73,9 @@ export default async function ({ debug, opt = {} }) {
 
     for (let file of files) {
       if (!isHtml(file.key)) continue;
-       //Pollyfill单独一组
+      //Pollyfill单独一组
       let babelGroup = []
-     
+
       if (opt.usePolyfill && opt.usePolyfill(file, this)) {
         babelGroup.push(key1)
       }
@@ -103,7 +103,7 @@ export default async function ({ debug, opt = {} }) {
     }
     function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
     function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
+    function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
     window._classCallCheck=_classCallCheck
     window._defineProperties=_defineProperties
     window.asyncGeneratorStep=asyncGeneratorStep
@@ -112,10 +112,11 @@ export default async function ({ debug, opt = {} }) {
     window._createForOfIteratorHelper=_createForOfIteratorHelper
     window._unsupportedIterableToArray=_unsupportedIterableToArray
     window._arrayLikeToArray=_arrayLikeToArray
+    window._typeof=_typeof
     `
     this.addFile({
       //无论是dev,还是pro都标识为 min，就是不压缩,不转换
-      meta: { isMin: true },
+      meta: { transformed: true, minified: true, parsed: true },
       key: key2,
       path,
       content
