@@ -1,6 +1,6 @@
 # hotpack-babel
 
-babael  plugin for [hotpack](https://github.com/duhongwei/hotpack)
+babel  plugin for [hotpack](https://github.com/duhongwei/hotpack)
 
 by default 
 
