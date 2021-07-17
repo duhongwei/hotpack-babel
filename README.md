@@ -47,6 +47,7 @@ export default {
 
 ### targets option
 targets is a function which has two parameters,file and hotpack.  file is current file,hotpack is current Hotpack instanse
+
 by default babel read targets from package.json 
 
 targets example:
