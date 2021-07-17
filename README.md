@@ -2,8 +2,6 @@
 
 babel  plugin for [hotpack](https://github.com/duhongwei/hotpack)
 
-by default 
-
 ## usage
 
 ```js
