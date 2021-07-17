@@ -1,4 +1,4 @@
-import babel from "@babel/core";
+import babel from '@babel/core';
 import { join, dirname } from 'path'
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
@@ -20,14 +20,17 @@ export default async function ({ debug, opt = {} }) {
       debug(`buble ${file.key}`)
       try {
         let presetsOpt = {
-          "useBuiltIns": false
+          'useBuiltIns': false
         }
         if (opt.targets) {
+          if (typeof opt.targets != 'function') {
+            throw new Error('targets option must be function')
+          }
           presetsOpt.targets = opt.targets(file, this)
         }
         let presets = [
           [
-            "@babel/env",
+            '@babel/env',
             presetsOpt
           ]
         ]
@@ -43,7 +46,10 @@ export default async function ({ debug, opt = {} }) {
         code = code.replace(/function _unsupportedIterableToArray.+/, '')
         code = code.replace(/function _arrayLikeToArray.+/, '')
         code = code.replace(/function _typeof.+/, '')
-        code=code.replace(`"use strict";`,'')
+        if (this.isPro()) {
+          
+          code = code.replace('"use strict";', '')
+        }
         file.content = code
 
       }
@@ -73,12 +79,21 @@ export default async function ({ debug, opt = {} }) {
 
     for (let file of files) {
       if (!isHtml(file.key)) continue;
-      //Pollyfill单独一组
+      //Pollyfill need seperated group
       let babelGroup = []
 
-      if (opt.usePolyfill && opt.usePolyfill(file, this)) {
-        babelGroup.push(key1)
+      if (opt.polyfill) {
+        if (typeof opt.polyfill != 'function') {
+          throw new Error('polyfill option must be function')
+        }
+        if (opt.polyfill(file, this)) {
+          babelGroup.push(key1)  
+        }
       }
+      else {
+        babelGroup.push(key1)  
+      }
+
       babelGroup.push(key2)
       file.dep.jsList.unshift(babelGroup)
     }
@@ -108,14 +123,13 @@ export default async function ({ debug, opt = {} }) {
     window._defineProperties=_defineProperties
     window.asyncGeneratorStep=asyncGeneratorStep
     window._asyncToGenerator=_asyncToGenerator
-    
     window._createForOfIteratorHelper=_createForOfIteratorHelper
     window._unsupportedIterableToArray=_unsupportedIterableToArray
     window._arrayLikeToArray=_arrayLikeToArray
     window._typeof=_typeof
     `
     this.addFile({
-      //无论是dev,还是pro都标识为 min，就是不压缩,不转换
+  
       meta: { transformed: true, minified: true, parsed: true },
       key: key2,
       path,
