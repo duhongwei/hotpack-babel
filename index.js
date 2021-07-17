@@ -46,12 +46,8 @@ export default async function ({ debug, opt = {} }) {
         code = code.replace(/function _unsupportedIterableToArray.+/, '')
         code = code.replace(/function _arrayLikeToArray.+/, '')
         code = code.replace(/function _typeof.+/, '')
-        if (this.isPro()) {
-          
-          code = code.replace('"use strict";', '')
-        }
+        code = code.replace('"use strict";', '')
         file.content = code
-
       }
       catch (error) {
         console.log(file.content)
