@@ -61,8 +61,8 @@ export default async function ({ debug, opt = {} }) {
     let path = join(__filename, '../corejs.min.js')
 
     let content = await this.fs.readFile(path)
-    content.replace('sourceMappingURL', '')
-    this.files.push({
+    content = content.replace('sourceMappingURL', '')
+    this.addFile({
       meta: { transformed: true, minified: true, parsed: true },
       key: key1,
       path,
@@ -83,11 +83,11 @@ export default async function ({ debug, opt = {} }) {
           throw new Error('polyfill option must be function')
         }
         if (opt.polyfill(file, this)) {
-          babelGroup.push(key1)  
+          babelGroup.push(key1)
         }
       }
       else {
-        babelGroup.push(key1)  
+        babelGroup.push(key1)
       }
 
       babelGroup.push(key2)
@@ -125,7 +125,7 @@ export default async function ({ debug, opt = {} }) {
     window._typeof=_typeof
     `
     this.addFile({
-  
+
       meta: { transformed: true, minified: true, parsed: true },
       key: key2,
       path,

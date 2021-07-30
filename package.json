@@ -1,7 +1,7 @@
 {
   "name": "@duhongwei/hotpack-babel",
   "type": "module",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "hotpack babel plugin",
   "main": "index.js",
   "scripts": {
@@ -14,7 +14,7 @@
   "maintainers": [
     {
       "name": "duhongwei",
-      "email": "duhongwei@360.cn"
+      "email": "jack_xxxx@163.cn"
     }
   ],
   "repository": {
